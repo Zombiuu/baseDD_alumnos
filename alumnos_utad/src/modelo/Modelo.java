@@ -6,9 +6,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 import vista.VistaPrincipal;
 
@@ -20,6 +25,14 @@ public class Modelo {
 
 	private VistaPrincipal vistaPrincipal;
 	private ModeloFich modeloFich;
+	
+	
+	private int cod;
+	private String dni;
+	private String nombre;
+	private String apellido;
+	private int telefono;
+	private String nacionalidad;
 
 	public Modelo() {
 		super();
@@ -49,6 +62,14 @@ public class Modelo {
 			}
 		}
 	}
+	public Modelo(int cod, String dni, String nombre, String apellido, int telefono, String nacionalidad) {
+		this.cod = cod;
+		this.dni = dni;
+		this.nombre = nombre;
+		this.apellido = apellido;
+		this.telefono = telefono;
+		this.nacionalidad = nacionalidad;
+	}
 
 	public Connection getConnection() {
 		Connection con;
@@ -64,6 +85,79 @@ public class Modelo {
 			return null;
 			// TODO: handle exception
 		}
+	}
+	
+
+	public ArrayList<Modelo> getInscripcionesList() {
+		ArrayList<Modelo> inscripcionesList = new ArrayList<Modelo>();
+		Connection connection = getConnection();
+
+	
+
+		String query = "SELECT * from alumnos";
+		Statement st;
+		ResultSet rs;
+		try {
+			st = connection.createStatement();
+			rs = st.executeQuery(query);
+			Modelo database;
+			while (rs.next()) {
+				database = new Modelo(rs.getInt("cod"), rs.getString("dni"), rs.getString("nombre"),
+						rs.getString("apellido"), rs.getInt("telefono"), rs.getString("nacionalidad"));
+				inscripcionesList.add(database);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return inscripcionesList;
+	}
+	
+	
+	public void ShowJTable() {
+		ArrayList<Modelo> list = getInscripcionesList();
+		DefaultTableModel model = (DefaultTableModel) vistaPrincipal.getTablaInfo();
+
+		Object[] row = new Object[5];
+		for (int i = 0; i < list.size(); i++) {
+			row[0] = list.get(i).getDni();
+			row[1] = list.get(i).getNombre();
+			row[2] = list.get(i).getApellido();
+			row[3] = list.get(i).getTelefono();
+			row[4] = list.get(i).getNacionalidad();
+
+			model.addRow(row);
+		}
+	}
+	
+	public void insertarAlumno(String txtDni, String txtNombre, String txtApellido, int telefono,
+			String txtNacionalidad) {
+		Connection con = getConnection();
+		String query = "INSERT INTO `alumnos` (`dni`, `nombre`, `apellido`, `telefono`, `nacionalidad`) VALUES ( ?,?,?,?,? )";
+		PreparedStatement ps;
+
+		try {
+			ps = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+			ps.setString(1, txtDni);
+			ps.setString(2, txtNombre);
+			ps.setString(3, txtApellido);
+			ps.setInt(4, telefono);
+			ps.setString(5, txtNacionalidad);
+			
+
+			if (ps.executeUpdate() == 1) {
+				DefaultTableModel model = (DefaultTableModel) vistaPrincipal.getTablaInfo();
+				model.setRowCount(0);
+				ShowJTable();
+				
+				JOptionPane.showMessageDialog(null, "Informaci�n almacenada satisfactoriamente");
+			} else {
+				JOptionPane.showMessageDialog(null, "La informaci�n no pudo ser almacenada");
+			}
+		} catch (Exception ex) {
+			// TODO: handle exception
+			ex.printStackTrace();
+		}
+
 	}
 
 	public void setVistaPrincipal(VistaPrincipal vistaPrincipal) {
@@ -107,6 +201,67 @@ public class Modelo {
 	public ModeloFich getModeloFich() {
 		return modeloFich;
 	}
+
+
+	public int getCod() {
+		return cod;
+	}
+
+
+	public void setCod(int cod) {
+		this.cod = cod;
+	}
+
+
+	public String getDni() {
+		return dni;
+	}
+
+
+	public void setDni(String dni) {
+		this.dni = dni;
+	}
+
+
+	public String getNombre() {
+		return nombre;
+	}
+
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+
+	public String getApellido() {
+		return apellido;
+	}
+
+
+	public void setApellido(String apellido) {
+		this.apellido = apellido;
+	}
+
+
+	public int getTelefono() {
+		return telefono;
+	}
+
+
+	public void setTelefono(int telefono) {
+		this.telefono = telefono;
+	}
+
+
+	public String getNacionalidad() {
+		return nacionalidad;
+	}
+
+
+	public void setNacionalidad(String nacionalidad) {
+		this.nacionalidad = nacionalidad;
+	}
+	
 	
 	
 }

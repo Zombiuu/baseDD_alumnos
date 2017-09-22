@@ -31,6 +31,8 @@ public class Launch {
 	
 		vistaPrincipal.setVisible(true);
 		
+		vistaPrincipal.onLoadTable();
+		
 		//Quitar esto de aqui
 		modelo.getConnection();
 		
