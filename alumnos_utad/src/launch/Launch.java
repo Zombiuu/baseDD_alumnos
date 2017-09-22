@@ -30,8 +30,10 @@ public class Launch {
 		modeloFich.setModelo(modelo);
 	
 		vistaPrincipal.setVisible(true);
+		
+		//Quitar esto de aqui
 		modelo.getConnection();
-		//vistaPrincipal.setVisible(true);
+		
 	}
 
 	

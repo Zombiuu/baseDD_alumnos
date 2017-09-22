@@ -16,12 +16,12 @@ public class Controlador {
 	}
 
 	public void setVistaPrincipal(VistaPrincipal vistaPrincipal) {
-		// TODO Auto-generated method stub
+		
 		this.vistaPrincipal = vistaPrincipal;
 	}
 
 	public void setModeloFich(ModeloFich modeloFich) {
-		// TODO Auto-generated method stub
+		
 		this.modeloFich = modeloFich;
 	}
 
