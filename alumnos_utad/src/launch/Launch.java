@@ -8,7 +8,6 @@ import vista.VistaPrincipal;
 public class Launch {
   
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		VistaPrincipal vistaPrincipal = new VistaPrincipal();
 		Modelo modelo = new Modelo();
 		Controlador controlador = new Controlador();
@@ -33,8 +32,6 @@ public class Launch {
 		
 		vistaPrincipal.onLoadTable();
 		
-		//Quitar esto de aqui
-		modelo.getConnection();
 		
 	}
 
