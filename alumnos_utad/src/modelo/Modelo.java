@@ -213,38 +213,50 @@ public class Modelo {
 		 }
 		
 	}
+	public void guardaTabla() {
+        try {
 
-	// public void obtenerDatosAlumno(String dni) {
-	//
-	// Connection connection = getConnection();
-	//
-	//
-	//
-	// String query = "SELECT * from alumnos WHERE dni = "+dniMod;
-	// Statement st;
-	// ResultSet rs;
-	// try {
-	// st = connection.createStatement();
-	// rs = st.executeQuery(query);
-	// Modelo database;
-	// while (rs.next()) {
-	// database = new Modelo(
-	// rs.getInt("cod"),
-	// rs.getString("dni"),
-	// rs.getString("nombre"),
-	// rs.getString("apellido"),
-	// rs.getInt("telefono"),
-	// rs.getString("nacionalidad"));
-	//
-	// }
-	// } catch (Exception e) {
-	// // TODO: handle exception
-	// }
-	//
-	// this.vistaPrincipal.datosAlumno();
-	//
-	// }
+            String sucursalesCSVFile = "bbdd/DatosTabla.txt";
+            BufferedWriter bfw = new BufferedWriter(new FileWriter(sucursalesCSVFile ));
 
+            for (int i = 0 ; i < vistaPrincipal.getTable().getRowCount(); i++) //realiza un barrido por filas.
+            {
+                for(int j = 0 ; j < vistaPrincipal.getTable().getColumnCount();j++) //realiza un barrido por columnas.
+                {
+                    bfw.write(String.valueOf(vistaPrincipal.getTable().getValueAt(i,j)));
+                    if (j < vistaPrincipal.getTable().getColumnCount() -1) { //agrega separador "," si no es el ultimo elemento de la fila.
+                        bfw.write("-");
+                    }
+                }
+                bfw.newLine(); //inserta nueva linea.
+            }
+
+            bfw.close(); //cierra archivo!
+            JOptionPane.showMessageDialog(null, "El archivo fue salvado correctamente!");
+        } catch (IOException e) {
+        	JOptionPane.showMessageDialog(null, "ERROR: Ocurrio un problema al salvar el archivo!" + e.getMessage());
+        }
+    }
+
+	
+	public void eliminarTodos() {
+	
+		try 
+		 {  
+		Connection con = getConnection();
+		PreparedStatement st = con.prepareStatement("DELETE FROM alumnos");
+		
+		st.executeUpdate(); 
+		DefaultTableModel model =(DefaultTableModel) vistaPrincipal.getTablaInfo();
+		model.setRowCount(0);
+		mostrarTabla();
+		 }
+		 catch(Exception e)
+		 {
+		     System.out.println(e);
+		 }
+		
+	}
 	public void setVistaPrincipal(VistaPrincipal vistaPrincipal) {
 		// TODO Auto-generated method stub
 		this.vistaPrincipal = vistaPrincipal;
@@ -335,30 +347,9 @@ public class Modelo {
 		this.nacionalidad = nacionalidad;
 	}
 
-	public void guardaTabla() {
-	        try {
+	
 
-	            String sucursalesCSVFile = "src/archivos/DatosTabla.txt";
-	            BufferedWriter bfw = new BufferedWriter(new FileWriter(sucursalesCSVFile ));
 
-	            for (int i = 0 ; i < vistaPrincipal.getTable().getRowCount(); i++) //realiza un barrido por filas.
-	            {
-	                for(int j = 0 ; j < vistaPrincipal.getTable().getColumnCount();j++) //realiza un barrido por columnas.
-	                {
-	                    bfw.write((String)(vistaPrincipal.getTable().getValueAt(i,j)));
-	                    if (j < vistaPrincipal.getTable().getColumnCount() -1) { //agrega separador "," si no es el ultimo elemento de la fila.
-	                        bfw.write(",");
-	                    }
-	                }
-	                bfw.newLine(); //inserta nueva linea.
-	            }
-
-	            bfw.close(); //cierra archivo!
-	            System.out.println("El archivo fue salvado correctamente!");
-	        } catch (IOException e) {
-	            System.out.println("ERROR: Ocurrio un problema al salvar el archivo!" + e.getMessage());
-	        }
-	    }
 		
 	}
 

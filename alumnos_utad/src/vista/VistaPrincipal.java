@@ -3,27 +3,30 @@ package vista;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.RowFilter;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import controlador.Controlador;
 import modelo.Modelo;
-import javax.swing.JSeparator;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class VistaPrincipal extends JFrame {
 
@@ -40,6 +43,9 @@ public class VistaPrincipal extends JFrame {
 	private JTextField txtApellidoMod;
 	private JTextField txtTelefonoMod;
 	private JTextField txtNacionalidadMod;
+	
+	private TableRowSorter trOrden;
+	private JTextField jtxtBuscarDni;
 
 	/**
 	 * Launch the application.
@@ -125,19 +131,72 @@ public class VistaPrincipal extends JFrame {
 			}
 		});
 		
-		JButton btnNewButton = new JButton("New button");
+		JButton btnNewButton = new JButton("Guardar en Fichero");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controlador.guardaTabla();
 			}
 		});
+		
+		JButton btnEliminarTodos = new JButton("Eliminar Todos");
+		btnEliminarTodos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				controlador.eliminarTodos();
+			}
+		});
+		
+		
+		
+		
+		
+		jtxtBuscarDni = new JTextField();
+		jtxtBuscarDni.setColumns(10);
+		jtxtBuscarDni.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent arg0) {
+				jtxtBuscarDni.addKeyListener(new KeyAdapter() {
+					public void keyReleased(final KeyEvent arg0) {
+
+						filtroDni();
+
+					}
+
+					public void filtroDni() {
+		trOrden.setRowFilter(RowFilter.regexFilter(jtxtBuscarDni.getText(), 0));
+
+	}
+				});
+				trOrden = new TableRowSorter(table.getModel());
+				table.setRowSorter(trOrden);
+			}
+		});
+		
+		JLabel lblBuscadorDni = new JLabel("Buscador DNI:");
+		
+		JButton btnSubirFicher = new JButton("Subir Ficher");
+		btnSubirFicher.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controlador.subirFihero();
+			}
+		});
+		
+		
+		
 
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGap(23)
-					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 489, GroupLayout.PREFERRED_SIZE)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(lblBuscadorDni)
+							.addGap(24)
+							.addComponent(jtxtBuscarDni, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(btnSubirFicher))
+						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 489, GroupLayout.PREFERRED_SIZE))
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(18)
@@ -160,7 +219,8 @@ public class VistaPrincipal extends JFrame {
 									.addComponent(btnModificar, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 									.addComponent(txtNacionalidadMod, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
 									.addComponent(btnEliminar, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
-									.addComponent(btnNewButton, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+									.addComponent(btnEliminarTodos, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 234, GroupLayout.PREFERRED_SIZE)
+									.addComponent(btnNewButton, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)))))
 					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
@@ -198,10 +258,16 @@ public class VistaPrincipal extends JFrame {
 							.addGap(5)
 							.addComponent(btnModificar)
 							.addGap(27)
-							.addComponent(btnEliminar)))
+							.addComponent(btnEliminar)
+							.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(btnEliminarTodos)))
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(btnNewButton)
-					.addContainerGap(8, Short.MAX_VALUE))
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnNewButton)
+						.addComponent(jtxtBuscarDni, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblBuscadorDni)
+						.addComponent(btnSubirFicher))
+					.addGap(12))
 		);
 
 		table = new JTable();
@@ -211,11 +277,15 @@ public class VistaPrincipal extends JFrame {
 				controlador.mostrarDatos();
 			}
 		});
+		
+		
 		table.setModel(new DefaultTableModel(new Object[][] {},
 				new String[] { "DNI", "Nombre", "Apellido", "Telefono", "Nacionalidad" }));
 		scrollPane.setViewportView(table);
 		contentPane.setLayout(gl_contentPane);
 	}
+	
+
 
 	public void onLoadTable() {
 		controlador.MostrarTabla();

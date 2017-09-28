@@ -64,5 +64,15 @@ public class Controlador {
     modelo.guardaTabla();
     }
 
+	public void eliminarTodos() {
+		// TODO Auto-generated method stub
+		modelo.eliminarTodos();
+		
+	}
+
+	public void subirFihero() {
+		modeloFich.leer();
+	}
+
 
 }
